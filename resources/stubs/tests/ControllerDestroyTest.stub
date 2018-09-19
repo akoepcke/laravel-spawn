@@ -1,0 +1,84 @@
+<?php
+
+namespace {{featureTestsNamespace}};
+
+use {{modelNamespace}}\{{modelName}};
+use {{modelNamespace}}\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
+use Tests\TestCase;
+
+class {{modelName}}ControllerDestroyTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private $user;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    public function testDestroy{{modelName}}WithoutLogin()
+    {
+        ${{modelNameLowerCase}} = factory({{modelName}}::class)->create();
+
+        $response = $this->delete(route('{{modelNamePluralLowerCase}}.destroy', ${{modelNameLowerCase}}));
+
+        $response->assertRedirect('login');
+        $this->assertDatabaseHas('{{modelNamePluralLowerCase}}', array_merge(${{modelNameLowerCase}}->toArray(), ['deleted_at' => null]));
+    }
+
+    public function testDestroy{{modelName}}WithoutPermission()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'delete') return false;
+        });
+
+        ${{modelNameLowerCase}} = factory({{modelName}}::class)->create();
+
+        $response = $this->actingAs($this->user)->delete(route('{{modelNamePluralLowerCase}}.destroy', ${{modelNameLowerCase}}));
+
+        $response->assertStatus(403);
+        $this->assertDatabaseHas('{{modelNamePluralLowerCase}}', array_merge(${{modelNameLowerCase}}->toArray(), ['deleted_at' => null]));
+    }
+
+    public function testDestroy{{modelName}}()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'delete') return true;
+        });
+        ${{modelNameLowerCase}} = factory({{modelName}}::class)->create();
+
+        $response = $this->from(route('{{modelNamePluralLowerCase}}.index'))->actingAs($this->user)->delete(route('{{modelNamePluralLowerCase}}.destroy', ${{modelNameLowerCase}}));
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('{{modelNamePluralLowerCase}}.index'));
+        $response->assertSessionHas('flash_message');
+        $this->assertContains('Das Objekt wurde gelöscht', $response->getSession()->get('flash_message'));
+        $this->assertSoftDeleted('{{modelNamePluralLowerCase}}', ${{modelNameLowerCase}}->toArray());
+    }
+
+    public function testDestroyTrashed{{modelName}}()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'delete') return true;
+        });
+        ${{modelNameLowerCase}} = factory({{modelName}}::class)->create();
+        ${{modelNameLowerCase}}->delete();
+
+        $response = $this->from(route('{{modelNamePluralLowerCase}}.index'))->actingAs($this->user)->delete(route('{{modelNamePluralLowerCase}}.destroy', ${{modelNameLowerCase}}));
+
+        $response->assertStatus(404);
+        $this->assertSoftDeleted('{{modelNamePluralLowerCase}}', ${{modelNameLowerCase}}->toArray());
+    }
+
+    public function from(string $url)
+    {
+        $this->app['session']->setPreviousUrl($url);
+
+        return $this;
+    }
+}

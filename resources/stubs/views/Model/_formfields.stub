@@ -1,0 +1,8 @@
+// TODO
+<div>
+    {{ Form::label('title', 'Titel', ['class' => '']) }}
+    <div>
+        {{ Form::text('title', null, ['class' => '']) }}
+        @include('errors.formfield', ['field' => 'title'])
+    </div>
+</div>

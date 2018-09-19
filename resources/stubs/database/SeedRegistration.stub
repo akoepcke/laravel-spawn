@@ -1,0 +1,1 @@
+$this->call({{modelNamePlural}}TableSeeder::class);

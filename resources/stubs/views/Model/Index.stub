@@ -1,0 +1,53 @@
+@extends('layouts.admin')
+
+@section('content')
+    <a href="{{ route('{{modelNamePluralLowerCase}}.create') }}">Objekt erstellen</a>
+    <a href="{{ route('trashed{{modelNamePlural}}.index') }}">Papierkorb</a>
+
+    <table id="{{modelNamePluralLowerCase}}">
+        <thead>
+            <tr>
+                <th>Titel</th> // TODO
+                <th>Erstellt am</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse(${{modelNamePluralLowerCase}} as ${{modelNameLowerCase}})
+                <tr>
+                    <td>{{ ${{modelNameLowerCase}}->title }}</td> // TODO
+                    <td>{{ ${{modelNameLowerCase}}->created_at->format('d.m.Y G:i') }}</td>
+                    <td>
+                        <a href="{{ route('{{modelNamePluralLowerCase}}.edit', ${{modelNameLowerCase}}) }}">Bearbeiten</a>
+                        {!! Form::open(['method' => 'DELETE', 'route' => ['{{modelNamePluralLowerCase}}.destroy', ${{modelNameLowerCase}}] ]) !!}
+                        {!! Form::submit('Löschen', ['class' => '']) !!}
+                        {!! Form::close() !!}
+                    </td>
+                </tr>
+            @empty
+
+            @endforelse
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>{{ ${{modelNamePluralLowerCase}}->count() }} Einträge</td>
+            <tr/>
+        </tfoot>
+    </table>
+@endsection
+
+@push('styles')
+    <link href="{{ asset('css/datatable.css') }}" rel="stylesheet">
+@endpush
+
+@push('scripts_header')
+    <script src="{{ asset('js/datatable.js') }}"></script>
+@endpush
+
+@push('scripts_footer')
+    <script>
+        $(document).ready( function () {
+            $('#{{modelNamePluralLowerCase}}').DataTable();
+        } );
+    </script>
+@endpush

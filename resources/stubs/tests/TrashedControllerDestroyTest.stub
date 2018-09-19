@@ -1,0 +1,78 @@
+<?php
+
+namespace {{featureTestsNamespace}};
+
+use {{modelNamespace}}\{{modelName}};
+use {{modelNamespace}}\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
+use Tests\TestCase;
+
+class Trashed{{modelName}}ControllerDestroyTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private $user;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    public function testDestroyTrashed{{modelName}}WithoutLogin()
+    {
+        $trashed{{modelName}} = factory({{modelName}}::class)->create();
+        $trashed{{modelName}}->delete();
+
+        $response = $this->delete(route('trashed{{modelNamePlural}}.destroy', $trashed{{modelName}}));
+
+        $response->assertRedirect('login');
+        $this->assertSoftDeleted('{{modelNamePluralLowerCase}}', $trashed{{modelName}}->toArray());
+    }
+
+    public function testDestroyTrashed{{modelName}}WithoutPermission()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'delete') return false;
+        });
+        $trashed{{modelName}} = factory({{modelName}}::class)->create();
+        $trashed{{modelName}}->delete();
+
+        $response = $this->actingAs($this->user)->delete(route('trashed{{modelNamePlural}}.destroy', $trashed{{modelName}}));
+
+        $response->assertStatus(403);
+        $this->assertSoftDeleted('{{modelNamePluralLowerCase}}', $trashed{{modelName}}->toArray());
+    }
+
+    public function testDestroyTrashed{{modelName}}()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'delete') return true;
+        });
+        $trashed{{modelName}} = factory({{modelName}}::class)->create();
+        $trashed{{modelName}}->delete();
+
+        $response = $this->from(route('trashed{{modelNamePlural}}.index'))->actingAs($this->user)->delete(route('trashed{{modelNamePlural}}.destroy', $trashed{{modelName}}));
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('trashed{{modelNamePlural}}.index'));
+        $response->assertSessionHas('flash_message');
+        $this->assertContains('Das Objekt wurde endgültig gelöscht', $response->getSession()->get('flash_message'));
+        $this->assertDatabaseMissing('{{modelNamePluralLowerCase}}', $trashed{{modelName}}->toArray());
+    }
+
+    public function testDestroyNontrashed{{modelName}}()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'delete') return true;
+        });
+        $trashed{{modelName}} = factory({{modelName}}::class)->create();
+
+        $response = $this->from(route('trashed{{modelNamePlural}}.index'))->actingAs($this->user)->delete(route('trashed{{modelNamePlural}}.destroy', $trashed{{modelName}}));
+
+        $response->assertStatus(404);
+        $this->assertDatabaseHas('{{modelNamePluralLowerCase}}', $trashed{{modelName}}->toArray());
+    }
+}

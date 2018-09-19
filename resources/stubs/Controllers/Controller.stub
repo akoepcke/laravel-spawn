@@ -1,0 +1,104 @@
+<?php
+
+namespace {{controllerNamespace}};
+
+use {{modelNamespace}}\{{modelName}};
+use Illuminate\Http\Request;
+use Form;
+
+class {{modelName}}Controller extends Controller
+{
+    public function __construct()
+    {
+        $this->authorizeResource({{modelName}}::class);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        ${{modelNamePluralLowerCase}} = {{modelName}}::all();
+
+        return view('{{modelNamePluralLowerCase}}.index')->with('{{modelNamePluralLowerCase}}', ${{modelNamePluralLowerCase}});
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('{{modelNamePluralLowerCase}}.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $this->validateWith([
+            'title'=>'required|max:100' // TODO
+        ]);
+
+        ${{modelNameLowerCase}} = {{modelName}}::create($request->only('title')); // TODO
+        ${{modelNameLowerCase}}->save();
+
+        return redirect()->route('{{modelNamePluralLowerCase}}.index')->with('flash_message', 'Das Objekt wurde erstellt.');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\{{modelName}}  ${{modelNameLowerCase}}
+     * @return \Illuminate\Http\Response
+     */
+    public function edit({{modelName}} ${{modelNameLowerCase}})
+    {
+        return view('{{modelNamePluralLowerCase}}.edit')->with('{{modelNameLowerCase}}', ${{modelNameLowerCase}});
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\{{modelName}}  ${{modelNameLowerCase}}
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, {{modelName}} ${{modelNameLowerCase}})
+    {
+        $this->validateWith([
+            'title'=>'required|max:100' // TODO
+        ]);
+
+        ${{modelNameLowerCase}}->title = $request->input('title'); // TODO
+        ${{modelNameLowerCase}}->save();
+
+        return redirect()->route('{{modelNamePluralLowerCase}}.index')->with('flash_message', 'Die Änderungen wurden gespeichert.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\{{modelName}} ${{modelNameLowerCase}}
+     * @return \Illuminate\Http\Response
+     * @throws \Exception
+     */
+    public function destroy({{modelName}} ${{modelNameLowerCase}})
+    {
+        ${{modelNameLowerCase}}->delete();
+
+        $flash_msg = 'Das Objekt wurde gelöscht. ';
+        $flash_msg .= Form::open(['method' => 'POST', 'route' => ['trashed{{modelNamePlural}}.restore', ${{modelNameLowerCase}}] ]);
+        $flash_msg .= Form::submit('Rückgängig?', ['class' => '']);
+        $flash_msg .= Form::close();
+
+        return back()->with('flash_message', $flash_msg);
+    }
+}

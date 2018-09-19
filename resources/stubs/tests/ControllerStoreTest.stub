@@ -1,0 +1,92 @@
+<?php
+
+namespace {{featureTestsNamespace}};
+
+use {{modelNamespace}}\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
+use Tests\TestCase;
+
+class {{modelName}}ControllerStoreTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private $user;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    public function testStore{{modelName}}WithoutLogin()
+    {
+        $data = $this->getValidData();
+
+        $response = $this->post(route('{{modelNamePluralLowerCase}}.store'), $data);
+
+        $response->assertRedirect('login');
+        $this->assertDatabaseMissing('{{modelNamePluralLowerCase}}', $data);
+    }
+
+    public function testStore{{modelName}}WithoutPermission()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'create') return false;
+        });
+        $data = $this->getValidData();
+
+        $response = $this->actingAs($this->user)->post(route('{{modelNamePluralLowerCase}}.store'), $data);
+
+        $response->assertStatus(403);
+        $this->assertDatabaseMissing('{{modelNamePluralLowerCase}}', $data);
+
+    }
+
+    public function testStore{{modelName}}WithValidData()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'create') return true;
+        });
+        $data = $this->getValidData();
+
+        $response = $this->actingAs($this->user)->post(route('{{modelNamePluralLowerCase}}.store'), $data);
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('{{modelNamePluralLowerCase}}.index'));
+        $response->assertSessionHas('flash_message', 'Das Objekt wurde erstellt.');
+        $this->assertDatabaseHas('{{modelNamePluralLowerCase}}', $data);
+    }
+
+    public function testStore{{modelName}}WithInvalidData()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'create') return true;
+        });
+        $data = $this->getValidData();
+        $data = ['title' => ''];
+
+        $response = $this->from(route('{{modelNamePluralLowerCase}}.create'))->actingAs($this->user)->post(route('{{modelNamePluralLowerCase}}.store'), $data);
+
+        $response->assertLocation(route('{{modelNamePluralLowerCase}}.create'));
+        $response->assertSessionHasErrors('title');
+        $this->assertDatabaseMissing('{{modelNamePluralLowerCase}}', $data);
+    }
+
+    private function getValidData()
+    {
+        $data = [
+                // TODO
+            'title' => 'Hello World'
+        ];
+        return $data;
+    }
+
+    public function from(string $url)
+    {
+        $this->app['session']->setPreviousUrl($url);
+
+        return $this;
+    }
+}

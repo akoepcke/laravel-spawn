@@ -1,0 +1,58 @@
+<?php
+
+namespace {{featureTestsNamespace}};
+
+use {{modelNamespace}}\{{modelName}};
+use {{modelNamespace}}\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
+use Tests\TestCase;
+
+class {{modelName}}ControllerEditTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private $user;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    public function testEdit{{modelName}}WithoutLogin()
+    {
+        ${{modelNameLowerCase}} = factory({{modelName}}::class)->create();
+
+        $response = $this->get(route('{{modelNamePluralLowerCase}}.edit', ${{modelNameLowerCase}}));
+
+        $response->assertRedirect('login');
+    }
+
+    public function testEdit{{modelName}}WithoutPermission()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'update') return false;
+        });
+        ${{modelNameLowerCase}} = factory({{modelName}}::class)->create();
+
+        $response = $this->actingAs($this->user)->get(route('{{modelNamePluralLowerCase}}.edit', ${{modelNameLowerCase}}));
+
+        $response->assertStatus(403);
+    }
+
+    public function testEdit{{modelName}}()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'update') return true;
+        });
+        ${{modelNameLowerCase}} = factory({{modelName}}::class)->create();
+
+        $response = $this->actingAs($this->user)->get(route('{{modelNamePluralLowerCase}}.edit', ${{modelNameLowerCase}}));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('{{modelNamePluralLowerCase}}.edit');
+        $response->assertViewHas('{{modelNameLowerCase}}');
+    }
+}

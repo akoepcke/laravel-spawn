@@ -1,0 +1,53 @@
+<?php
+
+namespace {{controllerNamespace}};
+
+use {{modelNamespace}}\{{modelName}};
+
+class Trashed{{modelName}}Controller extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('can:index,App\Models\{{modelName}}')->only('index');
+        $this->middleware('can:restore,trashed{{modelName}}')->only('restore');
+        $this->middleware('can:delete,trashed{{modelName}}')->only('destroy');
+    }
+
+    /**
+     * Display a listing of trashed resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        ${{modelNamePluralLowerCase}} = {{modelName}}::onlyTrashed()->get();
+
+        return view('trashed{{modelNamePlural}}.index')->with('{{modelNamePluralLowerCase}}', ${{modelNamePluralLowerCase}});
+    }
+
+    /**
+     * Restore the specified resource to storage.
+     *
+     * @param {{modelName}} $trashed{{modelName}}
+     * @return \Illuminate\Http\Response
+     */
+    public function restore({{modelName}} $trashed{{modelName}})
+    {
+        $trashed{{modelName}}->restore();
+
+        return back()->with('flash_message', 'Das Objekt wurde wiederhergestellt.');
+    }
+
+    /**
+     * Remove the specified resource permanently from storage.
+     *
+     * @param {{modelName}} $trashed{{modelName}}
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy({{modelName}} $trashed{{modelName}})
+    {
+        $trashed{{modelName}}->forceDelete();
+
+        return back()->with('flash_message', 'Das Objekt wurde endgültig gelöscht.');
+    }
+}

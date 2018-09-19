@@ -1,0 +1,2 @@
+use {{modelNamespace}}\{{modelName}};
+use {{policyNamespace}}\{{modelName}}Policy;

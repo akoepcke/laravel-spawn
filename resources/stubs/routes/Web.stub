@@ -1,0 +1,8 @@
+// {{modelNamePlural}}
+Route::model('{{modelNameLowerCase}}', '{{modelNamespace}}\{{modelName}}');
+Route::bind('trashed{{modelName}}', function ($trashed{{modelName}}) {
+    return {{modelNamespace}}\{{modelName}}::onlyTrashed()->where('uuid', $trashed{{modelName}})->first();
+});
+Route::post('trashed{{modelNamePlural}}/{trashed{{modelName}}}/restore', 'Trashed{{modelName}}Controller@restore')->name('trashed{{modelNamePlural}}.restore');
+Route::resource('trashed{{modelNamePlural}}', 'Trashed{{modelName}}Controller', ['only' => ['index', 'destroy']]);
+Route::resource('{{modelNamePluralLowerCase}}', '{{modelName}}Controller', ['except' => 'show']);

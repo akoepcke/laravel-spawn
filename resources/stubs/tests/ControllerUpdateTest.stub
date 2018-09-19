@@ -1,0 +1,93 @@
+<?php
+
+namespace {{featureTestsNamespace}};
+
+use {{modelNamespace}}\{{modelName}};
+use {{modelNamespace}}\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
+use Tests\TestCase;
+
+class {{modelName}}ControllerUpdateTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private $user;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    public function testUpdate{{modelName}}WithoutLogin()
+    {
+        ${{modelNameLowerCase}} = Factory({{modelName}}::class)->create();
+        $data = $this->getValidData();
+
+        $response = $this->put(route('{{modelNamePluralLowerCase}}.update', array_merge(['{{modelNameLowerCase}}' => ${{modelNameLowerCase}}], $data)));
+
+        $response->assertRedirect('login');
+        $this->assertDatabaseHas('{{modelNamePluralLowerCase}}', ${{modelNameLowerCase}}->toArray());
+        $this->assertDatabaseMissing('{{modelNamePluralLowerCase}}', $data);
+    }
+
+    public function testUpdate{{modelName}}WithoutPermission()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'update') return false;
+        });
+        ${{modelNameLowerCase}} = Factory({{modelName}}::class)->create();
+        $data = $this->getValidData();
+
+        $response = $this->actingAs($this->user)->put(route('{{modelNamePluralLowerCase}}.update', array_merge(['{{modelNameLowerCase}}'=> ${{modelNameLowerCase}}], $data)));
+
+        $response->assertStatus(403);
+        $this->assertDatabaseHas('{{modelNamePluralLowerCase}}', ${{modelNameLowerCase}}->toArray());
+        $this->assertDatabaseMissing('{{modelNamePluralLowerCase}}', $data);
+    }
+
+    public function testUpdate{{modelName}}WithValidData()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'update') return true;
+        });
+        ${{modelNameLowerCase}} = Factory({{modelName}}::class)->create();
+        $data = $this->getValidData();
+
+        $response = $this->actingAs($this->user)->put(route('{{modelNamePluralLowerCase}}.update', array_merge(['{{modelNameLowerCase}}' => ${{modelNameLowerCase}}], $data)));
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('{{modelNamePluralLowerCase}}.index'));
+        $response->assertSessionHas('flash_message', 'Die Änderungen wurden gespeichert.');
+        $this->assertDatabaseMissing('{{modelNamePluralLowerCase}}', ${{modelNameLowerCase}}->toArray());
+        $this->assertDatabaseHas('{{modelNamePluralLowerCase}}', $data);
+    }
+
+    public function testUpdate{{modelName}}WithInvalidData()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'update') return true;
+        });
+        ${{modelNameLowerCase}} = Factory({{modelName}}::class)->create();
+        $data = $this->getValidData();
+        $data['title'] = '';
+
+        $response = $this->from(route('{{modelNamePluralLowerCase}}.edit', ${{modelNameLowerCase}}))->actingAs($this->user)->put(route('{{modelNamePluralLowerCase}}.update', array_merge(['{{modelNameLowerCase}}' => ${{modelNameLowerCase}}], $data)));
+
+        $response->assertLocation(route('{{modelNamePluralLowerCase}}.edit', ${{modelNameLowerCase}}));
+        $response->assertSessionHasErrors('title');
+        $this->assertDatabaseHas('{{modelNamePluralLowerCase}}', ${{modelNameLowerCase}}->toArray());
+        $this->assertDatabaseMissing('{{modelNamePluralLowerCase}}', $data);
+    }
+
+    private function getValidData()
+    {
+        $data = [
+                // TODO
+            'title' => 'Hello World'
+        ];
+        return $data;
+    }
+}

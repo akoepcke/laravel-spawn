@@ -1,0 +1,85 @@
+<?php
+
+namespace {{featureTestsNamespace}};
+
+use {{modelNamespace}}\{{modelName}};
+use {{modelNamespace}}\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
+use Tests\TestCase;
+
+class Trashed{{modelName}}ControllerRestoreTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private $user;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    public function testRestoreTrashed{{modelName}}WithoutLogin()
+    {
+        $trashed{{modelName}} = factory({{modelName}}::class)->create();
+        $trashed{{modelName}}->delete();
+
+        $response = $this->post(route('trashed{{modelNamePlural}}.restore', $trashed{{modelName}}));
+
+        $response->assertRedirect('login');
+        $this->assertSoftDeleted('{{modelNamePluralLowerCase}}', $trashed{{modelName}}->toArray());
+    }
+
+    public function testRestoreTrashed{{modelName}}WithoutPermission()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'restore') return false;
+        });
+        $trashed{{modelName}} = factory({{modelName}}::class)->create();
+        $trashed{{modelName}}->delete();
+
+        $response = $this->actingAs($this->user)->post(route('trashed{{modelNamePlural}}.restore', $trashed{{modelName}}));
+
+        $response->assertStatus(403);
+        $this->assertSoftDeleted('{{modelNamePluralLowerCase}}', $trashed{{modelName}}->toArray());
+    }
+
+    public function testRestoreTrashed{{modelName}}()
+    {
+        $this->withoutExceptionHandling();
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'restore') return true;
+        });
+        $trashed{{modelName}} = factory({{modelName}}::class)->create();
+        $trashed{{modelName}}->delete();
+
+        $response = $this->from(route('trashed{{modelNamePlural}}.index'))->actingAs($this->user)->post(route('trashed{{modelNamePlural}}.restore', $trashed{{modelName}}));
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect(route('trashed{{modelNamePlural}}.index'));
+        $response->assertSessionHas('flash_message', 'Das Objekt wurde wiederhergestellt.');
+        $this->assertDatabaseHas('{{modelNamePluralLowerCase}}', array_merge($trashed{{modelName}}->toArray(), ['deleted_at' => null]));
+    }
+
+    public function testRestoreNontrashed{{modelName}}()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'restore') return true;
+        });
+        $trashed{{modelName}} = factory({{modelName}}::class)->create();
+
+        $response = $this->from(route('trashed{{modelNamePlural}}.index'))->actingAs($this->user)->post(route('trashed{{modelNamePlural}}.restore', $trashed{{modelName}}));
+
+        $response->assertStatus(404);
+        $this->assertDatabaseHas('{{modelNamePluralLowerCase}}', $trashed{{modelName}}->toArray());
+    }
+
+    public function from(string $url)
+    {
+        $this->app['session']->setPreviousUrl($url);
+
+        return $this;
+    }
+}

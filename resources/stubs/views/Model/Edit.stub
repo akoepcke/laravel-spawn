@@ -1,0 +1,24 @@
+@extends('layouts.admin')
+
+@section('content')
+        {{ Form::model(${{modelNameLowerCase}}, ['route' => ['{{modelNamePluralLowerCase}}.update', ${{modelNameLowerCase}}], 'method' => 'PUT']) }}
+        @include('{{modelNamePluralLowerCase}}._formfields')
+        <a id="cancel-button" role="button" href="{{ route('{{modelNamePluralLowerCase}}.index') }}">Abbrechen</a>
+        {{ Form::submit('Speichern', ['class' => '']) }}
+        {{ Form::close() }}
+@endsection
+
+@push('scripts_header')
+    <script src="{{ asset('js/tinymce.js') }}"></script>
+@endpush
+
+@push('scripts_footer')
+    <script>
+            tinymce.init({
+                selector: '#title',
+                plugins: 'lists',
+                menubar: '',
+                toolbar: 'cut copy paste | undo redo | bold italic underline strikethrough | bullist numlist | outdent, indent'
+            });
+        </script>
+@endpush

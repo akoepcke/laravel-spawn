@@ -1,0 +1,55 @@
+@extends('layouts.admin')
+
+@section('content')
+    <table id="{{modelNamePluralLowerCase}}">
+        <thead>
+            <tr>
+                <th>Titel</th> // TODO
+                <th>Gelöscht am</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @forelse(${{modelNamePluralLowerCase}} as ${{modelNameLowerCase}})
+            <tr>
+                <td>{{ ${{modelNameLowerCase}}->title }}</td> // TODO
+                <td>{{ ${{modelNameLowerCase}}->deleted_at->format('d.m.Y G:i') }}</td>
+                <td>
+                    {!! Form::open(['method' => 'POST', 'route' => ['trashed{{modelNamePlural}}.restore', ${{modelNameLowerCase}}] ]) !!}
+                    {!! Form::submit('Wiederherstellen', ['class' => '']) !!}
+                    {!! Form::close() !!}
+
+                    {!! Form::open(['method' => 'DELETE', 'route' => ['trashed{{modelNamePlural}}.destroy', ${{modelNameLowerCase}}] ]) !!}
+                    {!! Form::submit('Endgültig löschen', ['class' => '']) !!}
+                    {!! Form::close() !!}
+                </td>
+            </tr>
+        @empty
+
+        @endforelse
+        </tbody>
+        <tfoot>
+        <tr>
+            <td>{{ ${{modelNamePluralLowerCase}}->count() }} Einträge</td>
+        <tr/>
+        </tfoot>
+    </table>
+
+    <a id="cancel-button" role="button" href="{{ route('{{modelNamePluralLowerCase}}.index') }}">Abbrechen</a>
+@endsection
+
+@push('styles')
+    <link href="{{ asset('css/datatable.css') }}" rel="stylesheet">
+@endpush
+
+@push('scripts_header')
+    <script src="{{ asset('js/datatable.js') }}"></script>
+@endpush
+
+@push('scripts_footer')
+    <script>
+        $(document).ready( function () {
+            $('#{{modelNamePluralLowerCase}}').DataTable();
+        } );
+    </script>
+@endpush

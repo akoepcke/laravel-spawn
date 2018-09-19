@@ -1,0 +1,81 @@
+<?php
+
+namespace {{policyNamespace}};
+
+use {{modelNamespace}}\User;
+use {{modelNamespace}}\{{modelName}};
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class {{modelName}}Policy
+{
+    use HandlesAuthorization;
+
+    /**
+     * Determine whether the user can list {{modelNamePluralLowerCase}}.
+     *
+     * @param  \App\Models\User  $user
+     * @return mixed
+     */
+    public function index(User $user)
+    {
+        return $user->hasPermissionTo('view {{modelNamePluralLowerCase}}');
+    }
+
+    /**
+     * Determine whether the user can view {{modelNamePluralLowerCase}}.
+     *
+     * @param  \App\Models\User  $user
+     * @return mixed
+     */
+    public function view(User $user)
+    {
+        return $user->hasPermissionTo('view {{modelNamePluralLowerCase}}');
+    }
+
+    /**
+     * Determine whether the user can create {{modelNamePluralLowerCase}}.
+     *
+     * @param  \App\Models\User  $user
+     * @return mixed
+     */
+    public function create(User $user)
+    {
+        return $user->hasPermissionTo('create {{modelNamePluralLowerCase}}');
+    }
+
+    /**
+     * Determine whether the user can update the {{modelNameLowerCase}}.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\{{modelName}}  ${{modelNameLowerCase}}
+     * @return mixed
+     */
+    public function update(User $user, {{modelName}} ${{modelNameLowerCase}})
+    {
+        return $user->hasPermissionTo('update {{modelNamePluralLowerCase}}');
+    }
+
+    /**
+     * Determine whether the user can delete the {{modelNameLowerCase}}.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\{{modelName}}  ${{modelNameLowerCase}}
+     * @return mixed
+     */
+    public function delete(User $user, {{modelName}} ${{modelNameLowerCase}})
+    {
+        return $user->hasPermissionTo('delete {{modelNamePluralLowerCase}}');
+    }
+
+    /**
+     * Determine whether the user can restore the deleted {{modelNameLowerCase}}.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\{{modelName}}  ${{modelNameLowerCase}}
+     * @return mixed
+     */
+    public function restore(User $user, {{modelName}} ${{modelNameLowerCase}})
+    {
+        return $user->hasPermissionTo('delete {{modelNamePluralLowerCase}}');
+    }
+}

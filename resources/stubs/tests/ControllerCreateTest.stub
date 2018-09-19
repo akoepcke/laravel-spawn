@@ -1,0 +1,52 @@
+<?php
+
+namespace {{featureTestsNamespace}};
+
+use {{modelNamespace}}\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
+use Tests\TestCase;
+
+class {{modelName}}ControllerCreateTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private $user;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    public function testCreate{{modelName}}WithoutLogin()
+    {
+        $response = $this->get(route('{{modelNamePluralLowerCase}}.create'));
+
+        $response->assertRedirect('login');
+    }
+
+    public function testCreate{{modelName}}WithoutPermission()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'create') return false;
+        });
+
+        $response = $this->actingAs($this->user)->get(route('{{modelNamePluralLowerCase}}.create'));
+
+        $response->assertStatus(403);
+    }
+
+    public function testCreate{{modelName}}()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'create') return true;
+        });
+
+        $response = $this->actingAs($this->user)->get(route('{{modelNamePluralLowerCase}}.create'));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('{{modelNamePluralLowerCase}}.create');
+    }
+}

@@ -1,0 +1,52 @@
+<?php
+
+namespace {{featureTestsNamespace}};
+
+use Tests\TestCase;
+use {{modelNamespace}}\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
+
+class Trashed{{modelName}}ControllerIndexTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private $user;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    public function testIndexTrashed{{modelNamePlural}}WithoutLogin()
+    {
+        $response = $this->get(route('trashed{{modelNamePlural}}.index'));
+
+        $response->assertRedirect('login');
+    }
+
+    public function testIndexTrashed{{modelNamePlural}}WithoutPermission()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'index') return false;
+        });
+
+        $response = $this->actingAs($this->user)->get(route('trashed{{modelNamePlural}}.index'));
+
+        $response->assertStatus(403);
+    }
+
+    public function testIndexTrashed{{modelNamePlural}}()
+    {
+        Gate::before(function ($user, $ability) {
+            if ($ability == 'index') return true;
+        });
+
+        $response = $this->actingAs($this->user)->get(route('trashed{{modelNamePlural}}.index'));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('{{modelNamePluralLowerCase}}');
+    }
+}
