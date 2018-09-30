@@ -2,10 +2,10 @@
 
 namespace AKoepcke\LaravelSpawn\Commands;
 
-use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 use Illuminate\Console\Command;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 
 class SpawnRole extends Command
 {
@@ -42,18 +42,18 @@ class SpawnRole extends Command
      */
     public function handle()
     {
-        if ($this->confirm('If the role and permissions already exist, they will be overwritten.' . PHP_EOL . 'Continue anyways?')) {
+        if ($this->confirm('If the role and permissions already exist, they will be overwritten.'.PHP_EOL.'Continue anyways?')) {
             $this->initVars();
             $this->initDirs();
-            $rolename = $this->modelName . 'Admin';
+            $rolename = $this->modelName.'Admin';
             $object = strtolower(str_plural($this->modelName));
 
             $role = Role::firstOrCreate(['name' => $rolename]);
             $role->syncPermissions([
-                Permission::firstOrCreate(['name' => 'view ' . $object]),
-                Permission::firstOrCreate(['name' => 'create ' . $object]),
-                Permission::firstOrCreate(['name' => 'update ' . $object]),
-                Permission::firstOrCreate(['name' => 'delete ' . $object])
+                Permission::firstOrCreate(['name' => 'view '.$object]),
+                Permission::firstOrCreate(['name' => 'create '.$object]),
+                Permission::firstOrCreate(['name' => 'update '.$object]),
+                Permission::firstOrCreate(['name' => 'delete '.$object]),
             ]);
 
             $this->info('......Created and registered the role and permissions');
@@ -61,5 +61,4 @@ class SpawnRole extends Command
             $this->info('...Skipped');
         }
     }
-
 }

@@ -2,8 +2,8 @@
 
 namespace AKoepcke\LaravelSpawn\Commands;
 
-use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 use Illuminate\Console\Command;
+use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 
 class SpawnRoute extends Command
 {
@@ -50,5 +50,4 @@ class SpawnRoute extends Command
 
         $this->info('...Registered routes and route model binding');
     }
-
 }

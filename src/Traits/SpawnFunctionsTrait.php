@@ -32,7 +32,7 @@ trait SpawnFunctionsTrait
     private $featureTestsDir;
 
     /**
-     * init paths from config
+     * init paths from config.
      */
     protected function initVars()
     {
@@ -40,7 +40,7 @@ trait SpawnFunctionsTrait
     }
 
     /**
-     * init paths from config
+     * init paths from config.
      */
     protected function initDirs()
     {
@@ -86,7 +86,7 @@ trait SpawnFunctionsTrait
 
     /**
      * preg_replace($pattern, $replacement, $file)
-     * Durchsucht $file nach $pattern und ersetzt sie mit $replacement = $pattern.$stub
+     * Durchsucht $file nach $pattern und ersetzt sie mit $replacement = $pattern.$stub.
      *
      * @param $filepath
      * @param $stubname
@@ -120,14 +120,15 @@ trait SpawnFunctionsTrait
      */
     protected function getStubPath($filename)
     {
-        if (File::exists(resource_path('stubs/' . $filename))) {
-            return resource_path('stubs/' . $filename);
+        if (File::exists(resource_path('stubs/'.$filename))) {
+            return resource_path('stubs/'.$filename);
         }
-        return base_path('vendor/akoepcke/laravel-spawn/resources/stubs/' . $filename);
+
+        return base_path('vendor/akoepcke/laravel-spawn/resources/stubs/'.$filename);
     }
 
     /**
-     * replaces placeholders in stub
+     * replaces placeholders in stub.
      *
      * @param $stubname
      * @param bool $withModel
@@ -138,33 +139,36 @@ trait SpawnFunctionsTrait
         $template = $this->getFileContent($stubname);
 
         $template = $this->replaceNamespaces($template);
-        if ($withModel){
+        if ($withModel) {
             $template = $this->replaceObjects($template);
         }
 
         return $template;
     }
 
-    protected function replaceObjects($content){
+    protected function replaceObjects($content)
+    {
         $content = str_replace(
             [
                 '{{modelName}}',
                 '{{modelNameLowerCase}}',
                 '{{modelNamePlural}}',
-                '{{modelNamePluralLowerCase}}'
+                '{{modelNamePluralLowerCase}}',
             ],
             [
                 $this->modelName,
                 strtolower($this->modelName),
                 str_plural($this->modelName),
-                strtolower(str_plural($this->modelName))
+                strtolower(str_plural($this->modelName)),
             ],
             $content
         );
+
         return $content;
     }
 
-    protected function replaceNamespaces($content){
+    protected function replaceNamespaces($content)
+    {
         $content = str_replace(
             [
                 '{{modelNamespace}}',
@@ -182,7 +186,7 @@ trait SpawnFunctionsTrait
             ],
             $content
         );
+
         return $content;
     }
-
 }

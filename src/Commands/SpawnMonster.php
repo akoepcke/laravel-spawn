@@ -38,7 +38,7 @@ class SpawnMonster extends Command
     public function handle()
     {
         $name = ucfirst($this->argument('name'));
-        $this->info('Spawn a monster called ' . $name, PHP_EOL);
+        $this->info('Spawn a monster called '.$name, PHP_EOL);
 
         $this->call('spawn:model', ['name' => $name]);
         $this->call('spawn:controller', ['name' => $name]);
@@ -51,5 +51,4 @@ class SpawnMonster extends Command
 
         $this->info('Good luck!');
     }
-
 }

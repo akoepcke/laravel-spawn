@@ -2,8 +2,8 @@
 
 namespace AKoepcke\LaravelSpawn\Commands;
 
-use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 use Illuminate\Console\Command;
+use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 
 class SpawnPolicy extends Command
 {
@@ -45,7 +45,7 @@ class SpawnPolicy extends Command
         $this->touchDirectory($this->policiesDir);
 
         $this->spawn_create(
-            $this->policiesDir . '/' . $this->modelName . 'Policy.php',
+            $this->policiesDir.'/'.$this->modelName.'Policy.php',
             $this->getStubPath('Policies/Policy.stub')
         );
 
@@ -66,5 +66,4 @@ class SpawnPolicy extends Command
 
         $this->info('...Created and registered the policy');
     }
-
 }

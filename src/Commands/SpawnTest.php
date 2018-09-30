@@ -2,8 +2,8 @@
 
 namespace AKoepcke\LaravelSpawn\Commands;
 
-use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 use Illuminate\Console\Command;
+use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 
 class SpawnTest extends Command
 {
@@ -43,47 +43,46 @@ class SpawnTest extends Command
         $this->initVars();
         $this->initDirs();
         $this->touchDirectory($this->featureTestsDir);
-        $dir = $this->featureTestsDir . '/' . strtolower(str_plural($this->modelName));
+        $dir = $this->featureTestsDir.'/'.strtolower(str_plural($this->modelName));
         $this->touchDirectory($dir);
 
         $this->spawn_create(
-            $dir . '/' . $this->modelName . 'ControllerCreateTest.php',
+            $dir.'/'.$this->modelName.'ControllerCreateTest.php',
             $this->getStubPath('tests/ControllerCreateTest.stub')
         );
         $this->spawn_create(
-            $dir . '/' . $this->modelName . 'ControllerDestroyTest.php',
+            $dir.'/'.$this->modelName.'ControllerDestroyTest.php',
             $this->getStubPath('tests/ControllerDestroyTest.stub')
         );
         $this->spawn_create(
-            $dir . '/' . $this->modelName . 'ControllerEditTest.php',
+            $dir.'/'.$this->modelName.'ControllerEditTest.php',
             $this->getStubPath('tests/ControllerEditTest.stub')
         );
         $this->spawn_create(
-            $dir . '/' . $this->modelName . 'ControllerIndexTest.php',
+            $dir.'/'.$this->modelName.'ControllerIndexTest.php',
             $this->getStubPath('tests/ControllerIndexTest.stub')
         );
         $this->spawn_create(
-            $dir . '/' . $this->modelName . 'ControllerStoreTest.php',
+            $dir.'/'.$this->modelName.'ControllerStoreTest.php',
             $this->getStubPath('tests/ControllerStoreTest.stub')
         );
         $this->spawn_create(
-            $dir . '/' . $this->modelName . 'ControllerUpdateTest.php',
+            $dir.'/'.$this->modelName.'ControllerUpdateTest.php',
             $this->getStubPath('tests/ControllerUpdateTest.stub')
         );
         $this->spawn_create(
-            $dir . '/Trashed' . $this->modelName . 'ControllerDestroyTest.php',
+            $dir.'/Trashed'.$this->modelName.'ControllerDestroyTest.php',
             $this->getStubPath('tests/TrashedControllerDestroyTest.stub')
         );
         $this->spawn_create(
-            $dir . '/Trashed' . $this->modelName . 'ControllerIndexTest.php',
+            $dir.'/Trashed'.$this->modelName.'ControllerIndexTest.php',
             $this->getStubPath('tests/TrashedControllerIndexTest.stub')
         );
         $this->spawn_create(
-            $dir . '/Trashed' . $this->modelName . 'ControllerRestoreTest.php',
+            $dir.'/Trashed'.$this->modelName.'ControllerRestoreTest.php',
             $this->getStubPath('tests/TrashedControllerRestoreTest.stub')
         );
 
         $this->info('...Created the tests');
     }
-
 }

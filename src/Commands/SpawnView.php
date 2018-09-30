@@ -2,8 +2,8 @@
 
 namespace AKoepcke\LaravelSpawn\Commands;
 
-use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 use Illuminate\Console\Command;
+use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 
 class SpawnView extends Command
 {
@@ -44,32 +44,31 @@ class SpawnView extends Command
         $this->initDirs();
         $this->touchDirectory([
             $this->viewsDir,
-            $this->viewsDir . '/' . strtolower(str_plural($this->modelName)),
-            $this->viewsDir . '/trashed' . str_plural($this->modelName)
+            $this->viewsDir.'/'.strtolower(str_plural($this->modelName)),
+            $this->viewsDir.'/trashed'.str_plural($this->modelName),
         ]);
 
         $this->spawn_create(
-            $this->viewsDir . '/' . strtolower(str_plural($this->modelName)) . '/create.blade.php',
+            $this->viewsDir.'/'.strtolower(str_plural($this->modelName)).'/create.blade.php',
             $this->getStubPath('views/Model/Create.stub')
         );
         $this->spawn_create(
-            $this->viewsDir . '/' . strtolower(str_plural($this->modelName)) . '/edit.blade.php',
+            $this->viewsDir.'/'.strtolower(str_plural($this->modelName)).'/edit.blade.php',
             $this->getStubPath('views/Model/Edit.stub')
         );
         $this->spawn_create(
-            $this->viewsDir . '/' . strtolower(str_plural($this->modelName)) . '/_formfields.blade.php',
+            $this->viewsDir.'/'.strtolower(str_plural($this->modelName)).'/_formfields.blade.php',
             $this->getStubPath('views/Model/_formfields.stub')
         );
         $this->spawn_create(
-            $this->viewsDir . '/' . strtolower(str_plural($this->modelName)) . '/index.blade.php',
+            $this->viewsDir.'/'.strtolower(str_plural($this->modelName)).'/index.blade.php',
             $this->getStubPath('views/Model/Index.stub')
         );
         $this->spawn_create(
-            $this->viewsDir . '/trashed' . str_plural($this->modelName) . '/index.blade.php',
+            $this->viewsDir.'/trashed'.str_plural($this->modelName).'/index.blade.php',
             $this->getStubPath('views/trashedModel/Index.stub')
         );
 
         $this->info('...Created the views');
     }
-
 }

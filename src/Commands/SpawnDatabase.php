@@ -2,8 +2,8 @@
 
 namespace AKoepcke\LaravelSpawn\Commands;
 
-use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 use Illuminate\Console\Command;
+use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 
 class SpawnDatabase extends Command
 {
@@ -45,19 +45,19 @@ class SpawnDatabase extends Command
         $this->touchDirectory([
             $this->migrationsDir,
             $this->factoriesDir,
-            $this->seedsDir
+            $this->seedsDir,
         ]);
 
         $this->spawn_create(
-            $this->migrationsDir . '/' . date('Y_m_d_His') . '_create_' . strtolower(str_plural($this->modelName)) . '_table.php',
+            $this->migrationsDir.'/'.date('Y_m_d_His').'_create_'.strtolower(str_plural($this->modelName)).'_table.php',
             $this->getStubPath('Database/Migration.stub')
         );
         $this->spawn_create(
-            $this->factoriesDir . '/' . $this->modelName . 'Factory.php',
+            $this->factoriesDir.'/'.$this->modelName.'Factory.php',
             $this->getStubPath('Database/Factory.stub')
         );
         $this->spawn_create(
-            $this->seedsDir . '/' . str_plural($this->modelName) . 'TableSeeder.php',
+            $this->seedsDir.'/'.str_plural($this->modelName).'TableSeeder.php',
             $this->getStubPath('Database/Seed.stub')
         );
 
@@ -74,5 +74,4 @@ class SpawnDatabase extends Command
 
         $this->info('...Created and registered migration, factory and seed');
     }
-
 }

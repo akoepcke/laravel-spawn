@@ -2,8 +2,8 @@
 
 namespace AKoepcke\LaravelSpawn\Commands;
 
-use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 use Illuminate\Console\Command;
+use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 
 class SpawnController extends Command
 {
@@ -45,15 +45,14 @@ class SpawnController extends Command
         $this->touchDirectory($this->controllersDir);
 
         $this->spawn_create(
-            $this->controllersDir . '/' . $this->modelName . 'Controller.php',
+            $this->controllersDir.'/'.$this->modelName.'Controller.php',
             $this->getStubPath('Controllers/Controller.stub')
         );
         $this->spawn_create(
-            $this->controllersDir . '/Trashed' . $this->modelName . 'Controller.php',
+            $this->controllersDir.'/Trashed'.$this->modelName.'Controller.php',
             $this->getStubPath('Controllers/TrashedController.stub')
         );
 
         $this->info('...Created the controllers');
     }
-
 }
