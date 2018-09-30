@@ -2,19 +2,19 @@
 
 namespace AKoepcke\LaravelSpawn;
 
-use AKoepcke\LaravelSpawn\Commands\SpawnController;
-use AKoepcke\LaravelSpawn\Commands\SpawnDatabase;
-use AKoepcke\LaravelSpawn\Commands\SpawnModel;
-use AKoepcke\LaravelSpawn\Commands\SpawnMonster;
-use AKoepcke\LaravelSpawn\Commands\SpawnPolicy;
 use AKoepcke\LaravelSpawn\Commands\SpawnRole;
-use AKoepcke\LaravelSpawn\Commands\SpawnRoute;
 use AKoepcke\LaravelSpawn\Commands\SpawnTest;
 use AKoepcke\LaravelSpawn\Commands\SpawnView;
+use AKoepcke\LaravelSpawn\Commands\SpawnModel;
+use AKoepcke\LaravelSpawn\Commands\SpawnRoute;
+use AKoepcke\LaravelSpawn\Commands\SpawnPolicy;
 use Illuminate\Support\ServiceProvider as Base;
+use AKoepcke\LaravelSpawn\Commands\SpawnMonster;
+use AKoepcke\LaravelSpawn\Commands\SpawnDatabase;
+use AKoepcke\LaravelSpawn\Commands\SpawnController;
 
-class ServiceProvider extends Base {
-
+class ServiceProvider extends Base
+{
     /**
      * Perform post-registration booting of services.
      *
@@ -22,7 +22,7 @@ class ServiceProvider extends Base {
      */
     public function boot()
     {
-        if($this->app->runningInConsole()){
+        if ($this->app->runningInConsole()) {
             $this->commands([
                 SpawnMonster::class,
                 SpawnModel::class,
@@ -32,12 +32,12 @@ class ServiceProvider extends Base {
                 SpawnView::class,
                 SpawnDatabase::class,
                 SpawnRoute::class,
-                SpawnTest::class
+                SpawnTest::class,
             ]);
         }
 
         $this->publishes([
-            base_path('vendor/akoepcke/laravel-spawn/config/spawn.php') => config_path('spawn.php')
+            base_path('vendor/akoepcke/laravel-spawn/config/spawn.php') => config_path('spawn.php'),
         ], 'config');
 
         $this->publishes([

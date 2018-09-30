@@ -2,8 +2,8 @@
 
 namespace AKoepcke\LaravelSpawn\Commands;
 
-use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 use Illuminate\Console\Command;
+use AKoepcke\LaravelSpawn\Traits\SpawnFunctionsTrait;
 
 class SpawnModel extends Command
 {
@@ -45,11 +45,10 @@ class SpawnModel extends Command
         $this->touchDirectory($this->modelsDir);
 
         $this->spawn_create(
-            $this->modelsDir . '/' . $this->modelName . '.php',
+            $this->modelsDir.'/'.$this->modelName.'.php',
             $this->getStubPath('Models/Model.stub')
         );
 
         $this->info('...Created the model');
     }
-
 }
