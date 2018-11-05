@@ -27,10 +27,4 @@ class {{modelName}} extends Model
      */
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
-    /**
-    * TODO make sure it's not hashed a second time in the Controller
-    */
-    public function setPasswordAttribute($pass){
-        $this->attributes['password'] = Hash::make($pass);
-    }
 }
