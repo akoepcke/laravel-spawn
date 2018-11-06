@@ -4,7 +4,7 @@
     <a href="{{ route('{{modelNamePluralLowerCase}}.create') }}">Objekt erstellen</a>
     <a href="{{ route('trashed{{modelNamePlural}}.index') }}">Papierkorb</a>
 
-    <table id="{{modelNamePluralLowerCase}}">
+    <table id="{{modelNamePluralLowerCase}}" class="hover">
         <thead>
             <tr>
                 <th>Titel</th> // TODO
@@ -37,17 +37,25 @@
 @endsection
 
 @push('styles')
-    <link href="{{ asset('css/datatable.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
 @endpush
 
 @push('scripts_header')
-    <script src="{{ asset('js/datatable.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
 @endpush
 
 @push('scripts_footer')
     <script>
         $(document).ready( function () {
-            $('#{{modelNamePluralLowerCase}}').DataTable();
+            $('#{{modelNamePluralLowerCase}}').DataTable({
+                "order": [[0, "asc"], [1, "asc"]],
+                "columns": [
+                    null,
+                    null,
+                    {orderable: false}
+                ]
+            });
         } );
     </script>
 @endpush
