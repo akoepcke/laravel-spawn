@@ -2,9 +2,9 @@
 
 namespace {{controllerNamespace}};
 
+use Form;
 use {{modelNamespace}}\{{modelName}};
 use Illuminate\Http\Request;
-use Form;
 
 class {{modelName}}Controller extends Controller
 {
