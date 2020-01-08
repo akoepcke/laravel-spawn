@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": "~7.0",
-        "illuminate/support": "^5.6",
+        "illuminate/support": "^6.10",
         "symfony/process": "^4.1"
     },
     "require-dev": {
